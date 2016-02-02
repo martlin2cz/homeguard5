@@ -1,0 +1,181 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hg5="http://java.sun.com/jsf/composite/hg5">
+
+<composite:interface>
+	<!-- 	<composite:attribute name="action" -->
+	<!-- 		method-signature="java.lang.String action()" /> -->
+	<composite:attribute name="report"
+		displayName="EL evaluated to GuardingReport instance"
+		type="cz.martlin.hg5.logic.data.GuardingReport" required="true" />
+
+	<composite:attribute name="entriesListCollapsed"
+		displayName="True or false whether table of entries should be collapsed at the beginning or not"
+		type="boolean" default="false" required="false" />
+
+</composite:interface>
+
+<composite:implementation>
+	<c:set var="wsRoot"
+		value="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/ws" />
+
+	<p:outputPanel id="reportPanel">
+		<p:panelGrid columns="2"
+			styleClass="big-margin big-top-margin ui-panelgrid-blank">
+
+			<p:outputPanel styleClass="bigger-font centered">
+				<span>Zaznamenávání bylo spuštěno </span>
+				<h:outputText value="${cc.attrs.report.startedAt.time}">
+					<f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" />
+				</h:outputText>
+				<span> a zastaveno </span>
+				<h:outputText value="${cc.attrs.report.stoppedAt.time}">
+					<f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" />
+				</h:outputText>
+				<span>.</span>
+			</p:outputPanel>
+
+			<p:outputPanel styleClass="bigger-font centered">
+				<span>Bylo provedeno celkem </span>
+				<h:outputText value="${cc.attrs.report.itemsCount}" />
+				<span> záznamů, z nichž bylo </span>
+				<h:outputText value="${cc.attrs.report.warningsCount}" />
+				<span> ( </span>
+				<h:outputText value="#{cc.attrs.report.warningsRatio}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+				<span> ) varovných a </span>
+				<h:outputText value="${cc.attrs.report.criticalCount}" />
+				<span> ( </span>
+				<h:outputText value="#{cc.attrs.report.criticalsRatio}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+				<span> ) dokonce kritických.</span>
+			</p:outputPanel>
+		</p:panelGrid>
+
+		<p:outputPanel styleClass="bigger-font  big-top-margin centered">
+			<h:outputLabel value="Popis nepřítomnosti: " styleClass="big-margin"
+				for="descriptionTextField" />
+
+			<p:inplace editor="true" emptyLabel="Sem vložte popis"
+				styleClass="big-margin">
+				<p:ajax event="save"
+					listener="#{guardingReportPanel.saveDescription}" update="@parent" />
+
+				<p:inputText value="#{cc.attrs.report.description}"
+					id="descriptionTextField" required="true" label="Popis" size="40" />
+			</p:inplace>
+		</p:outputPanel>
+
+		<p:outputPanel styleClass="big-top-margin centered">
+			<p:chart type="line"
+				model="#{guardingReportPanel.getModelForReport(cc.attrs.report)}"
+				styleClass="big-top-margin" />
+		</p:outputPanel>
+
+		<p:dataTable id="reportEntriesTable" value="${cc.attrs.report.items}"
+			var="item" emptyMessage="Nebyly zaznamenány žádné záznamy."
+			styleClass="big-top-margin">
+
+			<p:column headerText="Podrobnosti" styleClass="centered">
+				<p:rowToggler />
+			</p:column>
+
+			<p:column headerText="Datum a čas" styleClass="centered">
+				<h:outputText value="#{item.recordedAt.time}">
+					<f:convertDateTime pattern="dd.MM., HH:mm:ss" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Stav" styleClass="centered">
+				<hg5:reportItemStatusText reportItem="#{item}" />
+			</p:column>
+
+			<p:rowExpansion>
+				<h2>
+					<h:outputLabel value="Stav: " />
+					<hg5:reportItemStatusText reportItem="#{item}" />
+				</h2>
+
+				<p:panelGrid columns="4" styleClass="big-margin ui-panelgrid-blank">
+					<h:outputLabel value="Úroveň varovného vzorku:" />
+					<h:outputText value="#{item.warningNoiseThreshold}">
+						<f:convertNumber type="number" />
+					</h:outputText>
+
+					<h:outputLabel value="Úroveň kritického vzorku:" />
+					<h:outputText value="#{item.criticalNoiseThreshold}">
+						<f:convertNumber type="number" />
+					</h:outputText>
+
+					<h:outputLabel
+						value="Varovný stav pokud ji překročí více vzorků než:" />
+					<h:outputText value="#{item.warningNoiseAmount}">
+						<f:convertNumber type="percent" />
+					</h:outputText>
+
+					<h:outputLabel
+						value="Kritický stav pokud ji překročí více vzorků než:" />
+					<h:outputText value="#{item.criticalNoiseAmount}">
+						<f:convertNumber type="percent" />
+					</h:outputText>
+
+					<h:outputLabel value="Naměřeno varovných vzorků:" />
+					<p:outputPanel>
+						<h:outputText value="#{item.warningSamplesRatio}">
+							<f:convertNumber type="percent" />
+						</h:outputText>
+						<h:outputText value=" (překročeno)" rendered="#{item.warning}" />
+					</p:outputPanel>
+
+					<h:outputLabel value="Naměřeno kritckých vzorků:" />
+					<p:outputPanel>
+						<h:outputText value="#{item.criticalSamplesRatio}">
+							<f:convertNumber type="percent" />
+						</h:outputText>
+						<h:outputText value=" (překročeno)" rendered="#{item.critical}" />
+					</p:outputPanel>
+				</p:panelGrid>
+
+
+				<p:panelGrid columns="2" rendered="#{item.warning}"
+					styleClass="big-margin ui-panelgrid-blank"
+					columnClasses="big-margin big-margin">
+
+					<p:fieldset legend="Časový průběh"
+						styleClass="ri-multimedia-fieldset">
+						<p:graphicImage
+							value="#{wsRoot}/chart.png?at-unix=#{item.recordedAt.timeInMillis}&amp;width=400&amp;height=100&amp;avgs=3D85CC&amp;mins=5591AB&amp;maxs=556CAB&amp;background=000040" />
+					</p:fieldset>
+
+					<p:fieldset legend="Přehrát záznam"
+						styleClass="ri-multimedia-fieldset">
+						<div class="big-margin centered">
+							<audio controls="controls" class="display-block">
+								<source
+									src="#{wsRoot}/record.wav?at-unix=#{item.recordedAt.timeInMillis}" />
+							</audio>
+							<!-- <p:media player="default" value="#{wsRoot}/record.wav?at-unix=#{item.recordedAt.timeInMillis}"></p:media> -->
+						</div>
+
+						<div class="centered">
+							<h:outputLabel value="Délka: " />
+							<h:outputText value="#{item.lenghtInSeconds}" />
+							<h:outputLabel value=" sekund" />
+						</div>
+					</p:fieldset>
+
+				</p:panelGrid>
+
+			</p:rowExpansion>
+		</p:dataTable>
+	</p:outputPanel>
+
+</composite:implementation>
+</html>

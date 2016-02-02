@@ -1,0 +1,81 @@
+@CHARSET "UTF-8";
+
+body {
+	padding: 5px;
+	margin: 0px;
+	background-color: #404040;
+}
+
+.footer {
+	text-align: right;
+	font-style: italic;
+}
+
+.centered {
+	/* 	display: block; */
+	text-align: center;
+}
+
+.mega-button {
+	display: inline-block !important;
+	margin: 10px;
+	font-size: 200% !important;
+}
+
+.open-report-button {
+	display: inline-block !important;
+	margin: 5px 5px 0px -30px;
+	font-size: 80% !important;
+}
+
+.ri-multimedia-fieldset {
+	display: block;
+	min-height: 150px;
+	width: 70%;
+	margin: 10px;
+	text-align: center;
+}
+
+.bigger-font {
+	font-size: 120% !important;
+}
+
+.big-margin {
+	margin: 20px;
+}
+
+.big-top-margin {
+	margin-top: 50px;
+}
+
+.some-margin {
+	margin: 5px;
+}
+
+.display-inline {
+	display: inline;
+}
+
+.display-block {
+	display: block;
+}
+
+.with-overflow-hidden {
+	display: inline-block;
+	width: 100px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+/*********************************************************/
+.status.status-normal {
+	color: #498949;
+}
+
+.status.status-warning {
+	color: #9C9141;
+}
+
+.status.status-critical {
+	color: #BF2020;
+}

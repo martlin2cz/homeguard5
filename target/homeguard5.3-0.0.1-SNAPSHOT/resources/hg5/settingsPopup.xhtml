@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface>
+	<composite:attribute name="action"
+		method-signature="java.lang.String action()" />
+</composite:interface>
+
+<composite:implementation>
+	<p:dialog id="configFormDial" widgetVar="configFormDial"
+		resizable="false" closable="true" closeOnEscape="true"
+		header="Nastavení">
+
+		<h:form id="configFormForm">
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Interval mezi záznamy (min)" for="interval" />
+				<p:spinner id="interval" value="#{mainForm.config.recordingInterval}" min="1" stepFactor="10" />
+
+				<h:outputLabel value="Délka testovacího záznamu (sec)" for="lenght" />
+				<p:spinner id="lenght" value="#{mainForm.config.sampleLenght}" min="10" stepFactor="5" />
+
+				<h:outputLabel value="Práh hluku" for="threshold" />
+				<p:spinner id="threshold" value="#{mainForm.config.noiseThreshold}" min="0.0" max="1.0"
+					stepFactor="0.1" />
+
+				<h:outputLabel value="Množství hluku" for="noises" />
+				<p:spinner id="noises" value="#{mainForm.config.acceptableNoise}" min="0.0" max="1.0"
+					stepFactor="0.1" />
+			</h:panelGrid>
+
+			<p:commandButton action="${cc.attrs.action}"
+				update="configFormForm" process="@this" value="Potvrdit" />
+
+			<p:commandButton value="Vrátit změny" update="configFormForm"
+				process="@this" type="reset">
+			</p:commandButton>
+
+		</h:form>
+	</p:dialog>
+</composite:implementation>
+</html>

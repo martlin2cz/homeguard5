@@ -1,0 +1,12 @@
+ - log appender do FacesMessage?
+ - grafický detaily - ostylovat (barvičky, roztahat), efekty ...
+ - javadoc?
+
+ - logovat cache grafů ... a vůbec všeho
+ - obnovit button
+ - butt zobrazit záznam ze dnepři běžícím guarding nefunguje (chyba s plotem)
+ - při stop nečekat na thred
+ - předěšlat thread aby bral instancei, ne aby si ji vytvářel
+ - udělat fasádu pro fšechno možný ...
+
+ 

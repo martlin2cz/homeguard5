@@ -1,0 +1,92 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+
+<composite:interface>
+
+</composite:interface>
+
+<composite:implementation>
+	<p:dialog id="configFormDial" widgetVar="configFormDial"
+		resizable="false" closable="true" closeOnEscape="true"
+		onShow="updateContent();" header="Nastavení">
+
+		<h:form id="configFormForm">
+			<p:remoteCommand name="updateContent" update="@form" />
+			
+			<p:outputPanel autoUpdate="true">
+				<p:messages autoUpdate="true" closable="true" showDetail="true" />
+
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Interval mezi záznamy (sec)" for="interval" />
+					<p:spinner id="interval"
+						value="#{configSettingsForm.config.samplesInterval}" min="10"
+						stepFactor="10" required="true" />
+
+					<h:outputLabel value="Délka testovacího záznamu (sec)" for="lenght" />
+					<p:spinner id="lenght"
+						value="#{configSettingsForm.config.sampleLenght}" min="10"
+						stepFactor="5" required="true" />
+
+					<h:outputLabel value="Práh varovného vzorku"
+						for="warningNoiseThreshold" />
+					<p:spinner id="warningNoiseThreshold"
+						value="#{configSettingsForm.config.warningNoiseThreshold}"
+						min="0.0" max="1.0" stepFactor="0.05" required="true" />
+
+					<h:outputLabel value="Práh kritického vzorku"
+						for="criticalNoiseThreshold" />
+					<p:spinner id="criticalNoiseThreshold"
+						value="#{configSettingsForm.config.criticalNoiseThreshold}"
+						min="0.0" max="1.0" stepFactor="0.05" required="true" />
+
+					<h:outputLabel value="Max. množství varovných vzorků"
+						for="warningNoiseAmount" />
+					<p:spinner id="warningNoiseAmount"
+						value="#{configSettingsForm.config.warningNoiseAmount}" min="0.0"
+						max="1.0" stepFactor="0.05" required="true" />
+
+					<h:outputLabel value="Max. množství kritických vzorků"
+						for="criticalNoiseAmount" />
+					<p:spinner id="criticalNoiseAmount"
+						value="#{configSettingsForm.config.criticalNoiseAmount}" min="0.0"
+						max="1.0" stepFactor="0.05" required="true" />
+
+					<h:outputLabel value="Výchozí popis nepřítomnosti"
+						for="defaultDesc" />
+					<p:inputText id="defaultDesc"
+						value="#{configSettingsForm.config.defaultDescription}" />
+
+					<h:outputLabel value="Adresář se záznamy" for="logsDir" />
+					<h:outputText id="logsDir"
+						value="#{configSettingsForm.config.logsRootDir.path}" />
+				</h:panelGrid>
+
+				<div class="centered big-top-margin">
+					<p:commandButton action="${configSettingsForm.save}"
+						update="configFormForm" value="Potvrdit" icon="ui-icon-disk" />
+
+					<p:spacer />
+
+					<p:commandButton action="${configSettingsForm.reset}"
+						update="configFormForm" type="reset" value="Vrátit změny"
+						icon="ui-icon-arrowreturnthick-1-w" />
+
+					<p:commandButton action="${configSettingsForm.reload}"
+						update="configFormForm" value="Znovu načíst"
+						icon="ui-icon-refresh" />
+
+					<p:spacer />
+
+					<p:button onclick="PF('configFormDial').hide(); return false;"
+						value="Zavřít" icon="ui-icon-close" />
+				</div>
+			</p:outputPanel>
+		</h:form>
+	</p:dialog>
+</composite:implementation>
+</html>

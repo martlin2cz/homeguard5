@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+
+
+#welcomePanel {
+	text-align: center;
+	font-size: 120%;
+}
+
+.bigButton {
+	display: block !important;
+	font-size: 150% !important;
+}

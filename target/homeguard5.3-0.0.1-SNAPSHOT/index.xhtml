@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hg5="http://java.sun.com/jsf/composite/hg5">
+<h:head>
+	<meta charset="UTF-8" />
+	<title>Homeguard 5</title>
+</h:head>
+
+<h:body>
+	<h:outputStylesheet library="" name="css/styles.css" />
+	<h:form>
+		<p:panel id="welcomePanel">
+			<c:if test="#{mainForm.running}">
+				<h1>Homeguard běží</h1>
+				<p:panel id="detailed">
+					Homeguard běží od ${mainForm.currentRecord.startedAt.time} a
+					nahrál ${mainForm.currentRecord.samplesCount} záznamů, z nichž je
+					${mainForm.currentRecord.acceptablesCount} přijatelných (minimum hluku).
+				</p:panel>
+
+				<p:panel id="records" header="Výpis záznamů" toggleable="true"
+					toggleOrientation="horizontal" collapsed="true"
+					toggleTitle="Rozbalit/sbalit">
+
+					<p:dataTable var="sample" value="#{mainForm.currentRecord.samples}">
+						<p:column headerText="Záznam">
+							<h:outputText value="#{sample}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+				<p:commandButton styleClass="bigButton" value="Zastavit"
+					action="${mainForm.stop}" update="welcomePanel" />
+
+				<p:poll interval="${mainForm.config.recordingInterval}"
+					update="detailed records" />
+			</c:if>
+			<c:if test="#{not mainForm.running}">
+				<h1>Homeguard je vypnutý</h1>
+				<p:commandButton styleClass="bigButton" value="Spustit"
+					action="${mainForm.start}" update="welcomePanel" />
+			</c:if>
+
+			<p:button onclick="PF('configFormDial').show(); return false"
+				value="Nastavení" />
+
+		</p:panel>
+	</h:form>
+
+
+	<hg5:settingsPopup action="#{mainForm.settingsChanged}" />
+
+	<p:growl id="growl" showDetail="true" sticky="true" />
+
+</h:body>
+</html>
