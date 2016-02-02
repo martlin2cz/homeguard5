@@ -58,6 +58,8 @@ public class RIsimpleChartRenderer implements Serializable {
 	 */
 	public byte[] getChartCached(SoundTrack track, int width, int height, Color mins, Color avgs, Color maxs,
 			Color background) {
+		LOG.info("Getting chart of track (from cache, currently cached {} charts): {}", cache.size(), track);
+
 		byte[] chart = cache.get(track);
 
 		if (chart == null) {
@@ -82,6 +84,8 @@ public class RIsimpleChartRenderer implements Serializable {
 	 */
 	public byte[] getChart(SoundTrack track, int width, int height, Color mins, Color avgs, Color maxs,
 			Color background) {
+		LOG.info("Creating chart of track: {}", track);
+
 		double[] samples = processor.samplesOfTrack(track);
 
 		BufferedImage image = createChart(samples, width, height, mins, avgs, maxs, background);
