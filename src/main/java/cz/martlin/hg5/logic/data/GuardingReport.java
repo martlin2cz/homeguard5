@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * Represents report of guarding instance. Contains list of audio samples
- * entries and some other metadata (start and end datetime and some
+ * reports items and some other metadata (start and end datetime and some
  * description).
  * 
  * @author martin
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class GuardingReport implements Serializable, Comparable<GuardingReport> {
 	private static final long serialVersionUID = -1282172162201310754L;
 
-	private String description = "testing?"; // XXX debug TESTING
+	private String description;
 	private Calendar startedAt;
 	private Calendar stoppedAt;
 	private final List<ReportItem> items = new LinkedList<>();
@@ -55,6 +55,10 @@ public class GuardingReport implements Serializable, Comparable<GuardingReport> 
 
 	public List<ReportItem> getItems() {
 		return items;
+	}
+
+	public boolean isHasSomeItems() {
+		return !items.isEmpty();
 	}
 
 	public int getItemsCount() {

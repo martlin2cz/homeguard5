@@ -14,9 +14,7 @@ import javax.faces.bean.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.chart.LineChartModel;
 
-import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.data.GuardingReport;
-import cz.martlin.hg5.logic.processV1.FileSystemReporter;
 import cz.martlin.hg5.web.charts.GuardingReportChart;
 
 @ViewScoped
@@ -24,10 +22,6 @@ import cz.martlin.hg5.web.charts.GuardingReportChart;
 public class GuardingReportPanel implements Serializable {
 	private static final long serialVersionUID = 1329899742372452384L;
 	private static final GuardingReportChart REPORT_CHARTS = new GuardingReportChart();
-	// private final Logger LOG = LogManager.getLogger(getClass());
-	//
-	// private static final SimpleDateFormat DATE_FORMAT = new
-	// SimpleDateFormat();
 
 	private List<GuardingReport> reportsAtDay = null;
 	private GuardingReport report;
@@ -38,7 +32,7 @@ public class GuardingReportPanel implements Serializable {
 	@PostConstruct
 	public void init() {
 		Calendar today = Calendar.getInstance();
-		Set<GuardingReport> reports = HomeguardSingleton.getHomeguard().reportsAt(today);
+		Set<GuardingReport> reports = HomeguardSingleton.get().reportsAt(today);
 		reportsAtDay = new ArrayList<>(reports);
 	}
 
@@ -55,12 +49,12 @@ public class GuardingReportPanel implements Serializable {
 	}
 
 	public void showCurrentReport() {
-		GuardingReport current = HomeguardSingleton.getHomeguard().currentReport();
+		GuardingReport current = HomeguardSingleton.get().currentReport();
 		this.report = current;
 	}
 
 	public void showLastReport() {
-		GuardingReport last = HomeguardSingleton.getHomeguard().lastReport();
+		GuardingReport last = HomeguardSingleton.get().lastReport();
 		this.report = last;
 	}
 
@@ -68,7 +62,7 @@ public class GuardingReportPanel implements Serializable {
 		Calendar day = Calendar.getInstance();
 		day.setTime((Date) event.getObject());
 
-		Set<GuardingReport> reports = HomeguardSingleton.getHomeguard().reportsAt(day);
+		Set<GuardingReport> reports = HomeguardSingleton.get().reportsAt(day);
 		this.reportsAtDay = new ArrayList<>(reports);
 	}
 
@@ -77,15 +71,17 @@ public class GuardingReportPanel implements Serializable {
 	}
 
 	public void showReport(Calendar date) {
-		GuardingReport report = HomeguardSingleton.getHomeguard().getReport(date);
+		GuardingReport report = HomeguardSingleton.get().getReport(date);
 		this.report = report;
 	}
 
 	public void saveDescription() {
-		Configuration config = HomeguardSingleton.getConfig();
-		FileSystemReporter reporter = new FileSystemReporter(config);
-		reporter.reportChanged(this.report);
-		Utils.info("Uloženo", "Změna uložena");
+		boolean success = HomeguardSingleton.get().saveReportsMetadata(report);
+		if (success) {
+			Utils.info("Uloženo", "Změna uložena");
+		} else {
+			Utils.info("Chyba", "Nepodařilo se uložit změny");
+		}
 	}
 
 	public LineChartModel getModelForReport(GuardingReport report) {

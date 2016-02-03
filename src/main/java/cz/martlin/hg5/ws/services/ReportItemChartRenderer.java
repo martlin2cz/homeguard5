@@ -5,14 +5,15 @@ import java.util.Calendar;
 import java.util.Map;
 
 import cz.martlin.hg5.logic.data.SoundTrack;
-import cz.martlin.hg5.logic.processV1.fsman.FileSystemReportsManager;
 import cz.martlin.hg5.web.HomeguardSingleton;
 import cz.martlin.hg5.web.charts.RIsimpleChartRenderer;
 import cz.martlin.hg5.ws.WebServiceProcessor;
 import cz.martlin.hg5.ws.WebServiceUtils;
 
 /**
- * Calls renderer for track's simple chart.
+ * Calls renderer for track's simple chart. Requires params at (or at-unix),
+ * width, height, and optionally mins, avgs, maxs, background and useCache
+ * (false on unspecified) .
  * 
  * @author martin
  *
@@ -21,7 +22,6 @@ public class ReportItemChartRenderer implements WebServiceProcessor {
 	private static final String IMAGE_FORMAT = RIsimpleChartRenderer.FORMAT;
 	private static final String MIME = "image/" + IMAGE_FORMAT;
 
-	private final FileSystemReportsManager manager = new FileSystemReportsManager(HomeguardSingleton.getConfig());
 	private final RIsimpleChartRenderer renderer = new RIsimpleChartRenderer();
 
 	public ReportItemChartRenderer() {
@@ -43,7 +43,7 @@ public class ReportItemChartRenderer implements WebServiceProcessor {
 		Color bg = WebServiceUtils.parseColorOrDefault("background", request, RIsimpleChartRenderer.BG_DEFAULT_COLOR);
 		boolean useCache = WebServiceUtils.parseBoolean("useCache", request, null, "false");
 
-		SoundTrack track = manager.loadSoundTrack(recordedAt);
+		SoundTrack track = HomeguardSingleton.get().getTrack(recordedAt);
 
 		if (track == null) {
 			throw new IllegalArgumentException("There is no such soundtrack at " + recordedAt.getTime());

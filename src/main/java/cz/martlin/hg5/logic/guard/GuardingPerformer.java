@@ -24,6 +24,7 @@ public class GuardingPerformer implements Serializable {
 	private final Configuration config;
 
 	private GuardInstanceThread thread = null;
+	private GuardingInstance instance = null;
 
 	public GuardingPerformer(Configuration config) {
 		this.config = config;
@@ -31,12 +32,28 @@ public class GuardingPerformer implements Serializable {
 	}
 
 	/**
+	 * Creates list of used reporters.
+	 * 
+	 * @param config
+	 * @return
+	 */
+	private static List<AbstractReporter> reporters(Configuration config) {
+		List<AbstractReporter> reporters = new ArrayList<>();
+
+		reporters.add(new FileSystemReporter(config));
+
+		return reporters;
+	}
+
+	/**
 	 * If there is no currently running instance, initializes and starts new
 	 * guarding instance.
 	 */
 	public synchronized void start() {
-		if (thread == null) {
-			thread = new GuardInstanceThread(config, reporters);
+		if (instance == null) {
+			instance = new GuardingInstance(config, reporters);
+			
+			thread = new GuardInstanceThread(config, instance);
 			thread.start();
 		}
 	}
@@ -45,12 +62,13 @@ public class GuardingPerformer implements Serializable {
 	 * If there is currently running instance, stops it.
 	 */
 	public synchronized void stop() {
-		if (thread != null) {
+		if (instance != null) {
 			thread.interrupt();
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-			}
+			// try {
+			// thread.join();
+			// } catch (InterruptedException e) {
+			// }
+			instance = null;
 			thread = null;
 		}
 	}
@@ -61,11 +79,7 @@ public class GuardingPerformer implements Serializable {
 	 * @return
 	 */
 	public synchronized GuardingInstance getCurrentInstance() {
-		if (thread != null) {
-			return thread.getInstance();
-		} else {
-			return null;
-		}
+		return instance;
 	}
 
 	/**
@@ -74,15 +88,7 @@ public class GuardingPerformer implements Serializable {
 	 * @return
 	 */
 	public synchronized boolean isGuardingRunning() {
-		return (thread != null);
-	}
-
-	private static List<AbstractReporter> reporters(Configuration config) {
-		List<AbstractReporter> reporters = new ArrayList<>();
-
-		reporters.add(new FileSystemReporter(config));
-
-		return reporters;
+		return (instance != null);
 	}
 
 	/**
@@ -94,18 +100,10 @@ public class GuardingPerformer implements Serializable {
 	public static class GuardInstanceThread extends Thread implements Interruptable {
 		private final GuardingInstance instance;
 
-		public GuardInstanceThread(Configuration config, List<AbstractReporter> reporters) {
+		public GuardInstanceThread(Configuration config, GuardingInstance instance) {
 			super("GuardInstanceT");
-			instance = new GuardingInstance(config, reporters);
-		}
 
-		/**
-		 * Returns instance running in this thread.
-		 * 
-		 * @return
-		 */
-		public GuardingInstance getInstance() {
-			return instance;
+			this.instance = instance;
 		}
 
 		@Override

@@ -6,15 +6,13 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
-import cz.martlin.hg5.logic.config.ConfigLoader;
 import cz.martlin.hg5.logic.config.Configuration;
+import cz.martlin.hg5.logic.guard.Homeguard;
 
 @RequestScoped
 @ManagedBean(name = "configSettingsForm")
 public class ConfigSettingsForm implements Serializable {
 	private static final long serialVersionUID = 3501199313655052697L;
-
-	private static final ConfigLoader LOADER = new ConfigLoader();
 
 	private final Configuration config = new Configuration();
 
@@ -43,9 +41,10 @@ public class ConfigSettingsForm implements Serializable {
 
 	public void save() {
 		checkAndWarn();
-
-		HomeguardSingleton.getConfig().setTo(config);
-		boolean success = LOADER.save(config);
+		Homeguard hg = HomeguardSingleton.get(); 
+		
+		hg.setConfigTo(config);
+		boolean success = hg.saveConfig();
 		if (success) {
 			Utils.info("Uloženo", "Konfigurační soubor byl uložen");
 		} else {
@@ -58,9 +57,11 @@ public class ConfigSettingsForm implements Serializable {
 	}
 
 	public void reload() {
-		boolean success = LOADER.load(config);
+		Homeguard hg = HomeguardSingleton.get(); 
+		
+		boolean success = hg.loadConfig();
 		if (success) {
-			HomeguardSingleton.getConfig().setTo(config);
+			this.config.setTo(hg.getConfig());
 			Utils.info("Načteno", "Konfigurační soubor byl načten znovu");
 		} else {
 			Utils.error("Chyba", "Konfigurační soubor se nepodařilo načíst");

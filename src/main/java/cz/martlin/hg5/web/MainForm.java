@@ -5,43 +5,32 @@ import java.io.Serializable;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import cz.martlin.hg5.HomeGuardAppParams;
 import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.data.GuardingReport;
-import cz.martlin.hg5.logic.guard.Homeguard;
 
 @ApplicationScoped
 @ManagedBean(name = "mainForm")
 public class MainForm implements Serializable {
 	private static final long serialVersionUID = -5102412853399452864L;
-	private final Logger LOG = LogManager.getLogger(getClass());
-
-	private final Homeguard homeguard = HomeguardSingleton.getHomeguard();
 
 	public MainForm() {
 	}
 
 	public Configuration getConfig() {
-		return homeguard.getConfig();
-	}
-
-	public Homeguard getHomeguard() {
-		return homeguard;
+		return HomeguardSingleton.get().getConfig();
 	}
 
 	public GuardingReport getCurrentReport() {
-		return homeguard.currentReport();
+		return HomeguardSingleton.get().currentReport();
 	}
 
 	public GuardingReport getLastReport() {
-		return homeguard.lastReport();
+		return HomeguardSingleton.get().lastReport();
 	}
 
 	public boolean isRunning() {
-		return homeguard.isRunning();
+		return HomeguardSingleton.get().isRunning();
 	}
 
 	public String getAppName() {
@@ -59,16 +48,10 @@ public class MainForm implements Serializable {
 	/////////////////////////////////////////////////////////////////////////////
 
 	public void start() {
-		homeguard.start();
+		HomeguardSingleton.get().start();
 	}
 
 	public void stop() {
-		homeguard.stop();
+		HomeguardSingleton.get().stop();
 	}
-
-	public void settingsChanged() {
-		LOG.info("Configuration changed to {}", getConfig());
-
-	}
-
 }

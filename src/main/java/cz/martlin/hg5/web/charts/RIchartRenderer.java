@@ -16,20 +16,35 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import cz.martlin.hg5.logic.data.SoundTrack;
-import cz.martlin.hg5.logic.processV1.ImprovedAudioProcessor;
 import cz.martlin.hg5.web.HomeguardSingleton;
 
+/**
+ * Old, charts generator for simple tracks, similar to
+ * {@link GuardingReportChart}. Deprecated since is too slow.
+ * 
+ * @author martin
+ * @deprecated too slow and practically unuseable, replaced with
+ *             {@link RIsimpleChartRenderer}
+ * @see RIsimpleChartRenderer
+ *
+ */
 public class RIchartRenderer implements Serializable {
 	private static final long serialVersionUID = -569957807078171698L;
 
 	private final Logger LOG = LogManager.getLogger(getClass());
 
-	private static final ImprovedAudioProcessor processor = new ImprovedAudioProcessor(HomeguardSingleton.getConfig());
-
 	public RIchartRenderer() {
 	}
 
-	public byte[] getGraphForTrack(SoundTrack track, int width, int height) {
+	/**
+	 * Renders chart for given track.
+	 * 
+	 * @param track
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	public byte[] getChartForTrack(SoundTrack track, int width, int height) {
 		LOG.info("Renderuje se graf pro record: {},", track);
 
 		CategoryDataset dataset = createDataset(track);
@@ -57,9 +72,15 @@ public class RIchartRenderer implements Serializable {
 		}
 	}
 
+	/**
+	 * Creates dataset of given track.
+	 * 
+	 * @param track
+	 * @return
+	 */
 	private CategoryDataset createDataset(SoundTrack track) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		double[] samples = processor.samplesOfTrack(track);
+		double[] samples = HomeguardSingleton.get().getJustSimplySamplesOfTrack(track);
 
 		final String series = "Záznam";
 		int i = 0;

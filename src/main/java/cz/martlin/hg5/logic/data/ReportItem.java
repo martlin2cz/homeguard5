@@ -7,6 +7,16 @@ import java.util.Calendar;
 import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.config.HasSamplesEntryConfig;
 
+/**
+ * Encapsulation of soundtrack {@link SoundTrack}. Has various metadata of
+ * soundtrack (and, optionally, particular array of samples). Each report item
+ * can be warning and/or critical. This is given this way: The item is [X] if
+ * the count of [X] samples ([X]SamplesCount) is higer than max[X]NoiseAmount.
+ * The sample is [X] if its value is higher than [X]NoiseThreshold.
+ * 
+ * @author martin
+ *
+ */
 public class ReportItem implements Serializable, HasSamplesEntryConfig {
 	private static final long serialVersionUID = -3552670994980179448L;
 
@@ -188,8 +198,8 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 				"criticalSamplesCount=" + criticalSamplesCount + "]";
 	}
 
-	public static ReportItem createWithSamples(Calendar recordedAt, double[] samples,
-			Configuration config, int warningSamplesCount, int criticalSamplesCount) {
+	public static ReportItem createWithSamples(Calendar recordedAt, double[] samples, Configuration config,
+			int warningSamplesCount, int criticalSamplesCount) {
 
 		int samplesCount = samples.length;
 		int lenghtInSeconds = config.getSampleLenght();

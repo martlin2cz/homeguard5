@@ -106,13 +106,8 @@ public class FileSystemManTools implements Serializable {
 		GuardingReport report = new GuardingReport();
 
 		for (String line : lines) {
-			String[] parts = line.split("=");
-			if ("startedAt".equals(parts[0])) {
-				report.setStarted(parseDate(parts[1]));
-			} else if ("stoppedAt".equals(parts[0])) {
-				report.setStopped(parseDate(parts[1]));
-			} else if ("description".equals(parts[0])) {
-				report.setDescription(parts[1]);
+			if (line.startsWith("startedAt") || line.startsWith("stoppedAt") || line.startsWith("description")) {
+				deserializeMetadata(line, report);
 			} else {
 				ReportItem item = deserializeReportItem(line);
 				report.addReportItem(item);
@@ -121,6 +116,20 @@ public class FileSystemManTools implements Serializable {
 
 		return report;
 
+	}
+
+	/**
+	 * Parses given line with metadata and sets into given report
+	 * 
+	 * @param line
+	 * @param report
+	 */
+	private void deserializeMetadata(String line, GuardingReport report) {
+		Map<String, String> map = parseMap(line);
+
+		report.setStarted(parseDate(map.get("startedAt")));
+		report.setStopped(parseDate(map.get("stoppedAt")));
+		report.setDescription(map.get("description"));
 	}
 
 	/**
@@ -211,16 +220,19 @@ public class FileSystemManTools implements Serializable {
 	 * 
 	 * @param file
 	 * @param track
+	 * @return true if success
 	 */
-	public void saveSoundTrack(File file, SoundTrack track) {
+	public boolean saveSoundTrack(File file, SoundTrack track) {
 		InputStream bais = null;
 		AudioInputStream ais = null;
 		try {
 			bais = new ByteArrayInputStream(track.getBytes());
 			ais = new AudioInputStream(bais, track.getFormat(), track.getBytes().length);
 			AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file);
+			return true;
 		} catch (IOException e) {
 			LOG.error("Cannot write WAV", e);
+			return false;
 		} finally {
 			IOUtils.closeQuietly(bais);
 			IOUtils.closeQuietly(ais);
@@ -253,15 +265,18 @@ public class FileSystemManTools implements Serializable {
 	 * 
 	 * @param file
 	 * @param message
+	 * @return true if success
 	 */
-	public void appendLine(File file, String message) {
+	public boolean appendLine(File file, String message) {
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file, true);
 			writer.write(message);
 			writer.write(System.lineSeparator());
+			return true;
 		} catch (IOException e) {
 			LOG.error("Cannot append line", e);
+			return false;
 		} finally {
 			IOUtils.closeQuietly(writer);
 		}
@@ -327,8 +342,19 @@ public class FileSystemManTools implements Serializable {
 		return "sample-" + formatDate(recordedAt) + ".wav";
 	}
 
-	private Map<String, String> parseMap(String line) {
-		String[] parts = line.split("(,[ \t]*)");
+	/**
+	 * Parses line with format key1=value1,[tab]key2=value2,... into map
+	 * 
+	 * @param line
+	 * @return
+	 */
+	private static Map<String, String> parseMap(String line) {
+		String[] parts = line.split(",\t");
+
+		if (parts[parts.length - 1].endsWith(",")) {
+			String part = parts[parts.length - 1];
+			parts[parts.length - 1] = part.substring(0, part.length() - 1);
+		}
 
 		Map<String, String> map = new HashMap<>(parts.length);
 		for (String part : parts) {
@@ -342,7 +368,13 @@ public class FileSystemManTools implements Serializable {
 		return map;
 	}
 
-	public String serializeMap(Map<String, Object> map) {
+	/**
+	 * Serializes map into format key1=value1,[tab]key2=value2,...
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static String serializeMap(Map<String, Object> map) {
 		StringBuilder stb = new StringBuilder();
 
 		for (Entry<String, Object> entry : map.entrySet()) {
@@ -365,7 +397,7 @@ public class FileSystemManTools implements Serializable {
 	}
 
 	public Calendar parseDate(String string) {
-		if (string == null) {
+		if (string == null || "null".equals(string)) {
 			return null;
 		}
 

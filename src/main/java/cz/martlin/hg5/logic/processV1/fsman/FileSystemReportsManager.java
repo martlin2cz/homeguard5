@@ -36,11 +36,12 @@ public class FileSystemReportsManager implements Serializable {
 	 * 
 	 * @param report
 	 */
-	public void saveMetadataOfReport(GuardingReport report) {
+	public boolean saveMetadataOfReport(GuardingReport report) {
 		LOG.info("Saving report's metadata: {}", report);
 		File log = tools.logFile(report);
 		String content = tools.serializeMetadata(report);
-		tools.appendLine(log, content);
+		boolean success = tools.appendLine(log, content);
+		return success;
 	}
 
 	/**

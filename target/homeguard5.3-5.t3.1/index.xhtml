@@ -38,7 +38,7 @@
 
 			<!-- CURRENTLY RUNNING GUARD OTHER STUFF -->
 			<c:if test="#{mainForm.running}">
-<!-- 				<p:poll interval="#{mainForm.config.samplesInterval}" update="@all" /> -->
+				<!-- 				<p:poll interval="#{mainForm.config.samplesInterval}" update="@all" /> -->
 			</c:if>
 
 			<!--  OTHER IN COMMON STUFF -->
@@ -56,15 +56,19 @@
 
 				<p:commandButton value="Zobrazit poslední záznam"
 					icon="ui-icon-star" action="#{guardingReportPanel.showLastReport}"
-					update="@all" rendered="#{not mainForm.running}" />
+					update="@all" rendered="#{not mainForm.running}"
+					styleClass="big-margin" />
 
 				<p:commandButton value="Zobrazit aktuální záznam"
 					icon="ui-icon-heart"
 					action="#{guardingReportPanel.showCurrentReport}" update="@all"
-					rendered="#{mainForm.running}" />
+					rendered="#{mainForm.running}" styleClass="big-margin" />
+
+				<p:commandButton value="Obnovit" icon="ui-icon-refresh" process="@none" update="@all"
+					rendered="#{mainForm.running}" styleClass="big-margin" />
 
 				<p:commandButton id="showAtDayButton" value="Zobrazit záznam ze dne"
-					icon="ui-icon-calendar" />
+					icon="ui-icon-calendar" styleClass="big-margin" />
 				<p:overlayPanel id="showAtDayPanel" for="showAtDayButton"
 					hideEffect="fade" dynamic="true" showCloseIcon="true">
 					<p:calendar mode="inline" timeOnly="false">
@@ -78,7 +82,7 @@
 						itemType="none"
 						emptyMessage="Tento den nebyly zaznamenán žádné záznamy">
 
-						<p:commandButton icon="ui-icon-search" title="Zobrazit"
+						<p:commandButton id="choosetButton" icon="ui-icon-search" title="Zobrazit"
 							action="#{guardingReportPanel.showReport(report.startedAt)}"
 							update="@all" styleClass="open-report-button" />
 
@@ -95,14 +99,15 @@
 
 				<p:commandButton value="Skrýt" icon="ui-icon-closethick"
 					rendered="#{guardingReportPanel.reportShown}"
-					action="#{guardingReportPanel.hideReport}" update="@all" />
+					action="#{guardingReportPanel.hideReport}" update="@all"
+					styleClass="big-margin" />
 			</p:outputPanel>
 
 			<c:if test="#{guardingReportPanel.reportShown}">
 				<hg5:reportPanel report="#{guardingReportPanel.report}" />
 			</c:if>
 		</p:panel>
-		
+
 		<div class="footer">
 			<h:outputText value="#{mainForm.appName}" />
 			<span> </span>

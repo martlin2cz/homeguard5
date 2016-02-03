@@ -15,13 +15,13 @@
 		<servlet-class>cz.martlin.hg5.ws.WebServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 
 	<servlet-mapping>
 		<servlet-name>Web service servlet</servlet-name>
 		<url-pattern>/ws/*</url-pattern>
 	</servlet-mapping>
-		
+
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
@@ -44,6 +44,9 @@
 		<param-value>resources.application</param-value>
 	</context-param>
 
+	<session-config>
+		<session-timeout>1080</session-timeout><!-- 18 hours -->
+	</session-config>
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
 	</listener>
@@ -61,4 +64,9 @@
 	<welcome-file-list>
 		<welcome-file>index.xhtml</welcome-file>
 	</welcome-file-list>
+
+	<error-page>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/index.index.xhtml</location>
+	</error-page>
 </web-app>

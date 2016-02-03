@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cz.martlin.hg5.logic.data.SoundTrack;
-import cz.martlin.hg5.logic.processV1.ImprovedAudioProcessor;
 import cz.martlin.hg5.web.HomeguardSingleton;
 
 /**
@@ -38,8 +37,6 @@ public class RIsimpleChartRenderer implements Serializable {
 	public static final Color AVGS_DEFAULT_COLOR = Color.MAGENTA;
 	public static final Color MAXS_DEFAULT_COLOR = Color.RED;
 	public static final Color BG_DEFAULT_COLOR = Color.WHITE;
-
-	private static final ImprovedAudioProcessor processor = new ImprovedAudioProcessor(HomeguardSingleton.getConfig());
 
 	private final Map<SoundTrack, byte[]> cache = new HashMap<>();
 
@@ -86,7 +83,7 @@ public class RIsimpleChartRenderer implements Serializable {
 			Color background) {
 		LOG.info("Creating chart of track: {}", track);
 
-		double[] samples = processor.samplesOfTrack(track);
+		double[] samples = HomeguardSingleton.get().getJustSimplySamplesOfTrack(track);
 
 		BufferedImage image = createChart(samples, width, height, mins, avgs, maxs, background);
 		byte[] data = exportImage(image);

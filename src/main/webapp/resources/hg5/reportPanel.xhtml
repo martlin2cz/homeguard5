@@ -76,7 +76,11 @@
 		<p:outputPanel styleClass="big-top-margin centered">
 			<p:chart type="line"
 				model="#{guardingReportPanel.getModelForReport(cc.attrs.report)}"
-				styleClass="big-top-margin" />
+				styleClass="big-top-margin"
+				rendered="#{not empty cc.attrs.report.itemsCount}" />
+
+			<h:outputText rendered="#{empty cc.attrs.report.items}"
+				value="Časový průběh se zobrazí, až bude mít co zobrazit :-)" />
 		</p:outputPanel>
 
 		<p:dataTable id="reportEntriesTable" value="${cc.attrs.report.items}"
@@ -151,7 +155,7 @@
 					<p:fieldset legend="Časový průběh"
 						styleClass="ri-multimedia-fieldset">
 						<p:graphicImage
-							value="#{wsRoot}/chart.png?at-unix=#{item.recordedAt.timeInMillis}&amp;width=400&amp;height=100&amp;avgs=3D85CC&amp;mins=5591AB&amp;maxs=556CAB&amp;background=000040" />
+							value="#{wsRoot}/chart.png?at-unix=#{item.recordedAt.timeInMillis}&amp;width=400&amp;height=100&amp;avgs=3D85CC&amp;mins=5591AB&amp;maxs=556CAB&amp;background=00000010" />
 					</p:fieldset>
 
 					<p:fieldset legend="Přehrát záznam"

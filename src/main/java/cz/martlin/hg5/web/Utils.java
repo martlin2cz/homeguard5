@@ -2,7 +2,11 @@ package cz.martlin.hg5.web;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-
+/**
+ * Provides some useful utilities for beans. 
+ * @author martin
+ *
+ */
 public class Utils {
 
 	public static void info(String title, String detail) {

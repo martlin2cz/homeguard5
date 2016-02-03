@@ -41,17 +41,17 @@ public class CommandService implements WebServiceProcessor {
 	}
 
 	private String processStart() {
-		HomeguardSingleton.getHomeguard().start();
+		HomeguardSingleton.get().start();
 		return "Homeguard started and running";
 	}
 
 	private String processStop() {
-		HomeguardSingleton.getHomeguard().stop();
+		HomeguardSingleton.get().stop();
 		return "Homeguard stopped and not running";
 	}
 
 	private String processStatus() {
-		if (HomeguardSingleton.getHomeguard().isRunning()) {
+		if (HomeguardSingleton.get().isRunning()) {
 			return "Homeguard is started and running";
 		} else {
 			return "Homeguard is stopped and not running";

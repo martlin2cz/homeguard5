@@ -5,6 +5,13 @@ import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
 
+/**
+ * Simple audio track. Has a format and raw bytes of audio data. Assumes format
+ * with 8 bits per sample.
+ * 
+ * @author martin
+ *
+ */
 public class SoundTrack implements Serializable {
 	private static final long serialVersionUID = 4225340778055694664L;
 

@@ -16,6 +16,14 @@ import org.primefaces.model.chart.LineChartModel;
 import cz.martlin.hg5.logic.data.GuardingReport;
 import cz.martlin.hg5.logic.data.ReportItem;
 
+/**
+ * Class for creating charts of {@link GuardingReport}s instances. Created chart
+ * representation is as instance of {@link LineChartModel}, usefull for
+ * primefaces' p:chart.
+ * 
+ * @author martin
+ *
+ */
 public class GuardingReportChart implements Serializable {
 	private static final long serialVersionUID = 9168115122709337077L;
 
@@ -26,7 +34,12 @@ public class GuardingReportChart implements Serializable {
 	public GuardingReportChart() {
 	}
 
-	
+	/**
+	 * Creates model for given report.
+	 * 
+	 * @param report
+	 * @return
+	 */
 	public LineChartModel getModel(GuardingReport report) {
 
 		LOG.info("Konstruuje se model grafu pro report: {},", report);
@@ -44,6 +57,12 @@ public class GuardingReportChart implements Serializable {
 		return model;
 	}
 
+	/**
+	 * Into given model adds reports' data.
+	 * 
+	 * @param model
+	 * @param report
+	 */
 	private void addReportDataSeries(LineChartModel model, GuardingReport report) {
 		ChartSeries warns = new ChartSeries();
 		ChartSeries errs = new ChartSeries();
@@ -61,10 +80,22 @@ public class GuardingReportChart implements Serializable {
 		model.addSeries(errs);
 	}
 
+	/**
+	 * To given model initializes x axis.
+	 * 
+	 * @param model
+	 * @param report
+	 */
 	private void initXaxis(LineChartModel model, GuardingReport report) {
 		DateAxis axis = createXaxis(report);
 		model.getAxes().put(AxisType.X, axis);
 	}
+
+	/**
+	 * To given model initializes y axis.
+	 * 
+	 * @param model
+	 */
 
 	private void initYaxis(LineChartModel model) {
 		Axis axis = model.getAxis(AxisType.Y);
@@ -73,6 +104,12 @@ public class GuardingReportChart implements Serializable {
 		// axis.setMin(1.0);
 	}
 
+	/**
+	 * Creates x axis (setups date stuff etc.)
+	 * 
+	 * @param report
+	 * @return
+	 */
 	private DateAxis createXaxis(GuardingReport report) {
 		DateAxis xaxis = new DateAxis("Čas záznamu");
 		xaxis.setTickFormat("%a %#d., %#H:%M");
