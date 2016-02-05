@@ -67,6 +67,12 @@
 
 	<error-page>
 		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
-		<location>/index.index.xhtml</location>
+		<location>/index.xhtml</location>
 	</error-page>
+
+	<env-entry>
+		<env-entry-name>config.file</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>/home/martin/hg5/homeguard5config.properties</env-entry-value>
+	</env-entry>
 </web-app>

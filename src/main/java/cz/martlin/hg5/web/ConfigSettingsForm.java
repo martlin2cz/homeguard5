@@ -6,8 +6,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import cz.martlin.hg5.Homeguard;
 import cz.martlin.hg5.logic.config.Configuration;
-import cz.martlin.hg5.logic.guard.Homeguard;
 
 @RequestScoped
 @ManagedBean(name = "configSettingsForm")

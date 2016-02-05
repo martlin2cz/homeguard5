@@ -1,4 +1,4 @@
-package cz.martlin.hg5.logic.process;
+package cz.martlin.hg5.logic.guard;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -12,6 +12,10 @@ import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.data.GuardingReport;
 import cz.martlin.hg5.logic.data.ReportItem;
 import cz.martlin.hg5.logic.data.SoundTrack;
+import cz.martlin.hg5.logic.process.AbstractAudioProcessor;
+import cz.martlin.hg5.logic.process.AbstractReporter;
+import cz.martlin.hg5.logic.process.AudioRecorder;
+import cz.martlin.hg5.logic.process.Interruptable;
 import cz.martlin.hg5.logic.processV1.ImprovedAudioProcessor;
 import cz.martlin.hg5.logic.processV1.fsman.FileSystemReportsManager;
 

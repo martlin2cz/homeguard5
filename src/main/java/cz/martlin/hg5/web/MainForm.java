@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
-import cz.martlin.hg5.HomeGuardAppParams;
+import cz.martlin.hg5.HomeGuardApp;
 import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.data.GuardingReport;
 
@@ -34,15 +34,15 @@ public class MainForm implements Serializable {
 	}
 
 	public String getAppName() {
-		return HomeGuardAppParams.APP_NAME;
+		return HomeGuardApp.getAppName();
 	}
 
 	public String getVersion() {
-		return HomeGuardAppParams.VERSION;
+		return HomeGuardApp.getVersion();
 	}
 
 	public String getAuthor() {
-		return HomeGuardAppParams.AUTHOR;
+		return HomeGuardApp.getAuthor();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

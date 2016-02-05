@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.martlin.hg5.logic.config.Configuration;
-import cz.martlin.hg5.logic.process.GuardingInstance;
 import cz.martlin.hg5.logic.process.AbstractReporter;
 import cz.martlin.hg5.logic.process.Interruptable;
 import cz.martlin.hg5.logic.processV1.FileSystemReporter;

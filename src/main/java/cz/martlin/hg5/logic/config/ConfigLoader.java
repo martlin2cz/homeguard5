@@ -24,9 +24,13 @@ public class ConfigLoader implements Serializable {
 
 	private final Logger LOG = LogManager.getLogger(getClass());
 
-	private static final File FILE = new File(".homeguard-config.properties");
-
 	private static final String COMMENT = "Homeguard configuration file";
+
+	private final File file;
+
+	public ConfigLoader(File file) {
+		this.file = file;
+	}
 
 	/**
 	 * Loads config file into given config instance.
@@ -35,13 +39,20 @@ public class ConfigLoader implements Serializable {
 	 * @return true if succeeds
 	 */
 	public boolean load(Configuration config) {
+		if (file == null) {
+			LOG.warn("Config file not specified, will not load 'em");
+			return false;
+		}
+
+		LOG.info("Loading config file from:  {}", file.getAbsolutePath());
+
 		Properties props = new Properties();
 		boolean success = true;
 
-		success &= load(FILE, props);
+		success &= load(file, props);
 		success &= setTo(config, props);
 
-		LOG.info("Config file loaded, succes? " + success);
+		LOG.info("Config file loaded, succes? {}", success);
 
 		return success;
 	}
@@ -53,13 +64,20 @@ public class ConfigLoader implements Serializable {
 	 * @return true if succeeds
 	 */
 	public boolean save(Configuration config) {
+		if (file == null) {
+			LOG.warn("Config file not specified, will not save config");
+			return false;
+		}
+
+		LOG.info("Saving config into file:  {}", file.getAbsolutePath());
+
 		Properties props = new Properties();
 		boolean success = true;
 
 		success &= setTo(props, config);
-		success &= save(props, FILE);
+		success &= save(props, file);
 
-		LOG.info("Config file saved, succes? " + success);
+		LOG.info("Config file saved, succes? {}", success);
 
 		return success;
 	}

@@ -1,4 +1,4 @@
-package cz.martlin.hg5.logic.guard;
+package cz.martlin.hg5;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -11,6 +11,7 @@ import cz.martlin.hg5.logic.config.ConfigLoader;
 import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.data.GuardingReport;
 import cz.martlin.hg5.logic.data.SoundTrack;
+import cz.martlin.hg5.logic.guard.GuardingPerformer;
 import cz.martlin.hg5.logic.processV1.ImprovedAudioProcessor;
 import cz.martlin.hg5.logic.processV1.fsman.FileSystemReportsManager;
 
@@ -26,7 +27,7 @@ import cz.martlin.hg5.logic.processV1.fsman.FileSystemReportsManager;
 public class Homeguard implements Serializable {
 	private static final long serialVersionUID = 786637193042907969L;
 
-	private final static ConfigLoader configLoader = new ConfigLoader();
+	private final static ConfigLoader configLoader = new ConfigLoader(HomeGuardApp.getConfigFile());
 	private final GuardingPerformer performer;
 	private final FileSystemReportsManager filesMan;
 	private final ImprovedAudioProcessor audioProcessor;

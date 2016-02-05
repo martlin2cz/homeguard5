@@ -2,8 +2,8 @@ package cz.martlin.hg5.web;
 
 import java.io.Serializable;
 
+import cz.martlin.hg5.Homeguard;
 import cz.martlin.hg5.logic.config.Configuration;
-import cz.martlin.hg5.logic.guard.Homeguard;
 
 /**
  * Class providing singleton access to one Homeguard instance.
