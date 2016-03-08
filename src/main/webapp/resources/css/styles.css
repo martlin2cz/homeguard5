@@ -36,6 +36,10 @@ body {
 	text-align: center;
 }
 
+.togglable-row {
+	cursor: pointer;
+}
+
 .bigger-font {
 	font-size: 120% !important;
 }

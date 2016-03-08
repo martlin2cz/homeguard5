@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.martlin</groupId>
 	<artifactId>homeguard5.3</artifactId>
-	<version>5.t3.5</version>
+	<version>5.t3.6</version>
 	<name>Homeguard 5, completelly web application with Primefaces GUI and implemented web service</name>
 	<packaging>war</packaging>
 
@@ -127,7 +127,7 @@
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<path>/${project.build.finalName}</path>
+					<path>/${project.build.name}</path>
 					<update>true</update>
 					<url>http://localhost:8080/manager/text</url>
 					<username>tomcatu53r</username>

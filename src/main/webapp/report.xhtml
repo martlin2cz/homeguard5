@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:hg5="http://java.sun.com/jsf/composite/hg5">
+<h:head>
+	<meta charset="UTF-8" />
+	<title>#{mainForm.appName}, záznamy</title>
+</h:head>
+
+<h:body>
+	<c:set var="wsRoot"
+		value="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/ws" />
+
+
+	<h:form id="mainForm">
+		<p>
+			<span>Zaznamenávání bylo spuštěno </span>
+			<h:outputText value="${mainForm.lastReport.startedAt.time}">
+				<f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" />
+			</h:outputText>
+			<span> a zastaveno </span>
+			<h:outputText value="${mainForm.lastReport.stoppedAt.time}">
+				<f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" />
+			</h:outputText>
+			<span>. </span> <span>Bylo provedeno celkem </span>
+			<h:outputText value="${mainForm.lastReport.itemsCount}" />
+			<span> záznamů, z nichž bylo </span>
+			<h:outputText value="${mainForm.lastReport.warningsCount}" />
+			<span> ( </span>
+			<h:outputText value="#{mainForm.lastReport.warningsRatio}">
+				<f:convertNumber type="percent" />
+			</h:outputText>
+			<span> ) varovných a </span>
+			<h:outputText value="${mainForm.lastReport.criticalCount}" />
+			<span> ( </span>
+			<h:outputText value="#{mainForm.lastReport.criticalsRatio}">
+				<f:convertNumber type="percent" />
+			</h:outputText>
+			<span> ) dokonce kritických. </span>
+
+			<h:link value="Více" outcome="index.xhtml" />
+		</p>
+		<p>
+			<h:outputLabel value="Popis: " />
+			<h:outputText value="#{mainForm.lastReport.description}" />
+		</p>
+		<h:dataTable value="${mainForm.lastReport.items}" var="item"
+			emptyMessage="Nebyly zaznamenány žádné záznamy." border="1">
+
+			<h:column>
+				<f:facet name="header">
+				Datum a čas
+			</f:facet>
+				<h:outputText value="#{item.recordedAt.time}">
+					<f:convertDateTime pattern="dd.MM., HH:mm:ss" />
+				</h:outputText>
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+				Stav
+			</f:facet>
+
+				<hg5:reportItemStatusText reportItem="#{item}" />
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+				Varovných
+			</f:facet>
+
+				<h:outputText value="#{item.warningSamplesRatio}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+				<span> / </span>
+				<h:outputText value="#{item.warningNoiseAmount}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+				Kritických
+			</f:facet>
+
+				<h:outputText value="#{item.criticalSamplesRatio}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+				<span> / </span>
+				<h:outputText value="#{item.criticalNoiseAmount}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+				Časový průběh
+			</f:facet>
+				<h:outputLink rendered="#{item.warning}"
+					value="#{wsRoot}/chart.png?at-unix=#{item.recordedAt.timeInMillis}&amp;width=600&amp;height=200&amp;avgs=3D85CC&amp;mins=5591AB&amp;maxs=556CAB&amp;background=00000040">
+						průběh
+					</h:outputLink>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+				Zvukový záznam
+			</f:facet>
+				<h:outputLink rendered="#{item.warning}"
+					value="#{wsRoot}/record.wav?at-unix=#{item.recordedAt.timeInMillis}">
+						záznam
+				</h:outputLink>
+			</h:column>
+
+
+			<h:column>
+				<f:facet name="header">
+					Přehrát
+				</f:facet>
+				<h:panelGrid rendered="#{item.warning}">
+					<audio controls="controls">
+						<source
+							src="#{wsRoot}/record.wav?at-unix=#{item.recordedAt.timeInMillis}" />
+					</audio>
+				</h:panelGrid>
+			</h:column>
+
+		</h:dataTable>
+	</h:form>
+</h:body>
+</html>

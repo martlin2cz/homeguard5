@@ -41,8 +41,8 @@ public class ConfigSettingsForm implements Serializable {
 
 	public void save() {
 		checkAndWarn();
-		Homeguard hg = HomeguardSingleton.get(); 
-		
+		Homeguard hg = HomeguardSingleton.get();
+
 		hg.setConfigTo(config);
 		boolean success = hg.saveConfig();
 		if (success) {
@@ -57,8 +57,8 @@ public class ConfigSettingsForm implements Serializable {
 	}
 
 	public void reload() {
-		Homeguard hg = HomeguardSingleton.get(); 
-		
+		Homeguard hg = HomeguardSingleton.get();
+
 		boolean success = hg.loadConfig();
 		if (success) {
 			this.config.setTo(hg.getConfig());
@@ -66,7 +66,11 @@ public class ConfigSettingsForm implements Serializable {
 		} else {
 			Utils.error("Chyba", "Konfigurační soubor se nepodařilo načíst");
 		}
+	}
 
+	public void redefault() {
+		config.setTo(new Configuration());
+		Utils.info("Obnoveno", "Configurace nastavena na výchozí (ale zatím neuložena)");
 	}
 
 }

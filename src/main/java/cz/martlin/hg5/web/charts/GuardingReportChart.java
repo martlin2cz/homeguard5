@@ -70,6 +70,12 @@ public class GuardingReportChart implements Serializable {
 		warns.setLabel("varovné záznamy");
 		errs.setLabel("kritické záznamy");
 
+//		if (!report.isHasSomeItems()) {
+//			String when = DATE_FORMAT.format(report.getStartedAt().getTime());
+//			warns.set(when, 0);
+//			errs.set(when, 0);
+//		}
+
 		for (ReportItem item : report.getItems()) {
 			String when = DATE_FORMAT.format(item.getRecordedAt().getTime());
 			warns.set(when, item.getWarningSamplesRatio());

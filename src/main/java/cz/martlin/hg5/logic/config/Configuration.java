@@ -6,14 +6,15 @@ import java.io.Serializable;
 public class Configuration implements Serializable, HasSamplesEntryConfig {
 	private static final long serialVersionUID = -5676212208946459691L;
 
-	private int samplesInterval = /* 10 */ 60;
-	private int sampleLenght = /* 20 */1;
+	private int samplesInterval = 5 * 60 /* 10 */;
+	private int sampleLenght = 20 /* 1 */;
+	private int samplesGroup = 64;
 
-	private double warningNoiseThreshold = 0.1;
-	private double criticalNoiseThreshold = 0.3;
+	private double warningNoiseThreshold = 0.5;
+	private double criticalNoiseThreshold = 0.8;
 
-	private double warningNoiseAmount = 0.40;
-	private double criticalNoiseAmount = 0.15;
+	private double warningNoiseAmount = 0.2;
+	private double criticalNoiseAmount = 0.1;
 
 	private File logsRootDir = new File("/home/martin/hg5/");
 	private String defaultDescription = "Nepřítomnost";
@@ -35,6 +36,14 @@ public class Configuration implements Serializable, HasSamplesEntryConfig {
 
 	public void setSampleLenght(int sampleLenght) {
 		this.sampleLenght = sampleLenght;
+	}
+
+	public int getSamplesGroup() {
+		return samplesGroup;
+	}
+
+	public void setSamplesGroup(int samplesGroup) {
+		this.samplesGroup = samplesGroup;
 	}
 
 	@Override

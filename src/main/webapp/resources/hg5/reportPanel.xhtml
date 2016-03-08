@@ -24,6 +24,8 @@
 	<c:set var="wsRoot"
 		value="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/ws" />
 
+	<h:outputScript library="js" name="scripts.js" target="body" />
+
 	<p:outputPanel id="reportPanel">
 		<p:panelGrid columns="2"
 			styleClass="big-margin big-top-margin ui-panelgrid-blank">
@@ -74,19 +76,26 @@
 		</p:outputPanel>
 
 		<p:outputPanel styleClass="big-top-margin centered">
-			<p:chart type="line"
-				model="#{guardingReportPanel.getModelForReport(cc.attrs.report)}"
-				styleClass="big-top-margin"
-				rendered="#{not empty cc.attrs.report.itemsCount}" />
+			<c:if test="#{not empty cc.attrs.report.items}">
+				<p:chart type="line"
+					model="#{guardingReportPanel.getModelForReport(cc.attrs.report)}"
+					styleClass="big-top-margin" />
+			</c:if>
 
 			<h:outputText rendered="#{empty cc.attrs.report.items}"
 				value="Časový průběh se zobrazí, až bude mít co zobrazit :-)" />
 		</p:outputPanel>
 
-		<p:dataTable id="reportEntriesTable" value="${cc.attrs.report.items}"
-			var="item" emptyMessage="Nebyly zaznamenány žádné záznamy."
-			styleClass="big-top-margin">
+		<h:outputScript library="js" name="scripts.js" />
+		<h:outputScript target="body">
+			makeRowClickExpandingOnLoad('reportEntriesTable');
+		</h:outputScript>
 
+		<p:dataTable id="reportEntriesTable" widgetVar="reportEntriesTable"
+			value="${cc.attrs.report.items}" var="item"
+			emptyMessage="Nebyly zaznamenány žádné záznamy."
+			styleClass="big-top-margin">
+			
 			<p:column headerText="Podrobnosti" styleClass="centered">
 				<p:rowToggler />
 			</p:column>
@@ -99,6 +108,26 @@
 
 			<p:column headerText="Stav" styleClass="centered">
 				<hg5:reportItemStatusText reportItem="#{item}" />
+			</p:column>
+
+			<p:column headerText="Varovných" styleClass="centered">
+				<h:outputText value="#{item.warningSamplesRatio}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+				<span> / </span>
+				<h:outputText value="#{item.warningNoiseAmount}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Kritických" styleClass="centered">
+				<h:outputText value="#{item.criticalSamplesRatio}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
+				<span> / </span>
+				<h:outputText value="#{item.criticalNoiseAmount}">
+					<f:convertNumber type="percent" />
+				</h:outputText>
 			</p:column>
 
 			<p:rowExpansion>
@@ -179,6 +208,7 @@
 
 			</p:rowExpansion>
 		</p:dataTable>
+
 	</p:outputPanel>
 
 </composite:implementation>

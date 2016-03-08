@@ -17,7 +17,7 @@
 
 		<h:form id="configFormForm">
 			<p:remoteCommand name="updateContent" update="@form" />
-			
+
 			<p:outputPanel autoUpdate="true">
 				<p:messages autoUpdate="true" closable="true" showDetail="true" />
 
@@ -68,22 +68,25 @@
 
 				<div class="centered big-top-margin">
 					<p:commandButton action="${configSettingsForm.save}"
-						update="configFormForm" value="Potvrdit" icon="ui-icon-disk" />
+						update="configFormForm" value="Potvrdit" icon="ui-icon-disk"
+						styleClass="some-margin" />
 
-					<p:spacer />
-
+					<p:button onclick="PF('configFormDial').hide(); return false;"
+						value="Zavřít" icon="ui-icon-close" styleClass="some-margin" />
+				</div>
+				<div class="centered">
 					<p:commandButton action="${configSettingsForm.reset}"
 						update="configFormForm" type="reset" value="Vrátit změny"
-						icon="ui-icon-arrowreturnthick-1-w" />
+						icon="ui-icon-arrowreturnthick-1-w" styleClass="some-margin" />
 
 					<p:commandButton action="${configSettingsForm.reload}"
 						update="configFormForm" value="Znovu načíst"
-						icon="ui-icon-refresh" />
+						icon="ui-icon-refresh" styleClass="some-margin" />
 
-					<p:spacer />
-
-					<p:button onclick="PF('configFormDial').hide(); return false;"
-						value="Zavřít" icon="ui-icon-close" />
+					<p:commandButton action="${configSettingsForm.redefault}"
+						update="configFormForm" value="Obnovit výchozí"
+						icon="ui-icon-document" onclick="return confirm('Skutečně?');"
+						styleClass="some-margin" />
 				</div>
 			</p:outputPanel>
 		</h:form>

@@ -102,23 +102,23 @@ public class AudioRecorder implements Serializable, Interruptable {
 			out.write(data, 0, numBytesReaden);
 		}
 
-		LOG.info("Recorded {} bytes (samples) of audio data", out.size());
+		LOG.info("Recorded {} bytes of audio data", out.size());
 
 		SoundTrack track = new SoundTrack(out.toByteArray(), FORMAT);
 		return track;
 	}
 
 	/**
-	 * Creates and returns format used for recording. It is necessary to return
-	 * format with 8 bits per sample and signed format.
+	 * Creates and returns format used for recording. It is necessary (for nex
+	 * process) to return format with 8 bits per sample and signed format.
 	 * 
 	 * @return
 	 */
 	private static AudioFormat createFormat() {
 		int channels = 2;
 		int sampleSizeInBits = 8;
-		float sampleRate = 16000;
-		boolean bigEndian = true;
+		float sampleRate = 8000;
+		boolean bigEndian = true; // if 8bit/sample endianity doesn't value
 		boolean signed = true;
 
 		AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);

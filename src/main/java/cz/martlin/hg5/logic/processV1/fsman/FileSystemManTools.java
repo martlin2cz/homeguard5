@@ -193,8 +193,8 @@ public class FileSystemManTools implements Serializable {
 		double warningNoiseThreshold = Double.parseDouble(map.get("warningNoiseThreshold"));
 		int warningSamplesCount = Integer.parseInt(map.get("warningSamplesCount"));
 
-		double[] samples = tryToLoadSamplesOfItem(recordedAt);
-		return new ReportItem(recordedAt, lenghtInSeconds, samples, samplesCount, warningNoiseThreshold,
+		
+		return new ReportItem(recordedAt, lenghtInSeconds, samplesCount, warningNoiseThreshold,
 				criticalNoiseThreshold, maxWarningNoiseAmount, maxCriticalNoiseAmount, warningSamplesCount,
 				criticalSamplesCount);
 	}

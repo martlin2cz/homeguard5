@@ -1,18 +1,19 @@
 package cz.martlin.hg5.logic.data;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.config.HasSamplesEntryConfig;
+import cz.martlin.hg5.logic.processV1.fsman.FileSystemManTools;
 
 /**
  * Encapsulation of soundtrack {@link SoundTrack}. Has various metadata of
  * soundtrack (and, optionally, particular array of samples). Each report item
  * can be warning and/or critical. This is given this way: The item is [X] if
  * the count of [X] samples ([X]SamplesCount) is higer than max[X]NoiseAmount.
- * The sample is [X] if its value is higher than [X]NoiseThreshold.
+ * The sample is [X] if its value is higher than [X]NoiseThreshold. The samples
+ * array is loaded lazyly.
  * 
  * @author martin
  *
@@ -23,7 +24,6 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 	private final Calendar recordedAt;
 	private final int lenghtInSeconds;
 
-	private final double[] samples;
 	private final int samplesCount;
 
 	private final double warningNoiseThreshold;
@@ -35,13 +35,12 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 	private final int warningSamplesCount;
 	private final int criticalSamplesCount;
 
-	public ReportItem(Calendar recordedAt, int lenghtInSeconds, double[] samples, int samplesCount,
-			double warningNoiseThreshold, double criticalNoiseThreshold, double maxWarningNoiseAmount,
-			double maxCriticalNoiseAmount, int warningSamplesCount, int criticalSamplesCount) {
+	public ReportItem(Calendar recordedAt, int lenghtInSeconds, int samplesCount, double warningNoiseThreshold,
+			double criticalNoiseThreshold, double maxWarningNoiseAmount, double maxCriticalNoiseAmount,
+			int warningSamplesCount, int criticalSamplesCount) {
 		super();
 		this.recordedAt = recordedAt;
 		this.lenghtInSeconds = lenghtInSeconds;
-		this.samples = samples;
 		this.samplesCount = samplesCount;
 		this.warningNoiseThreshold = warningNoiseThreshold;
 		this.criticalNoiseThreshold = criticalNoiseThreshold;
@@ -71,12 +70,8 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 		return lenghtInSeconds;
 	}
 
-	public boolean isHasSamples() {
-		return samples != null;
-	}
-
-	public double[] getSamples() {
-		return samples;
+	public double[] getSamples(Configuration config) {
+		return loadSamples(config, recordedAt);
 	}
 
 	public int getSamplesCount() {
@@ -137,7 +132,6 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 		temp = Double.doubleToLongBits(maxWarningNoiseAmount);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((recordedAt == null) ? 0 : recordedAt.hashCode());
-		result = prime * result + Arrays.hashCode(samples);
 		result = prime * result + samplesCount;
 		temp = Double.doubleToLongBits(warningNoiseThreshold);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -169,8 +163,6 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 				return false;
 		} else if (!recordedAt.equals(other.recordedAt))
 			return false;
-		if (!Arrays.equals(samples, other.samples))
-			return false;
 		if (samplesCount != other.samplesCount)
 			return false;
 		if (Double.doubleToLongBits(warningNoiseThreshold) != Double.doubleToLongBits(other.warningNoiseThreshold))
@@ -182,14 +174,13 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 
 	@Override
 	public String toString() {
-		return "ReportItem [recordedAt=" + recordedAt + //
+		return "ReportItem [recordedAt=" + recordedAt.getTime() + //
 				", getWarningSamplesRatio()=" + getWarningSamplesRatio() + //
 				", getCriticalSamplesRatio()=" + getCriticalSamplesRatio() + //
 				", isWarning()=" + isWarning() + //
 				", isCritical()=" + isCritical() + //
 				", lenghtInSeconds=" + lenghtInSeconds + //
 				", samplesCount=" + samplesCount + //
-				", samples=" + (isHasSamples() ? samples.length : null) + //
 				", warningNoiseThreshold=" + warningNoiseThreshold + //
 				", criticalNoiseThreshold=" + criticalNoiseThreshold + //
 				", maxWarningNoiseAmount=" + maxWarningNoiseAmount + //
@@ -198,19 +189,24 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 				"criticalSamplesCount=" + criticalSamplesCount + "]";
 	}
 
-	public static ReportItem createWithSamples(Calendar recordedAt, double[] samples, Configuration config,
+	private static double[] loadSamples(Configuration config, Calendar recordedAt) {
+		final FileSystemManTools man = new FileSystemManTools(config);
+
+		double[] samples = man.tryToLoadSamplesOfItem(recordedAt);
+		return samples;
+	}
+
+	public static ReportItem createWithSamples(Calendar recordedAt, int samplesCount, Configuration config,
 			int warningSamplesCount, int criticalSamplesCount) {
 
-		int samplesCount = samples.length;
 		int lenghtInSeconds = config.getSampleLenght();
 		double warningNoiseThreshold = config.getWarningNoiseThreshold();
 		double criticalNoiseThreshold = config.getCriticalNoiseThreshold();
 		double maxWarningNoiseAmount = config.getWarningNoiseAmount();
 		double maxCriticalNoiseAmount = config.getCriticalNoiseAmount();
 
-		return new ReportItem(recordedAt, lenghtInSeconds, samples, samplesCount, warningNoiseThreshold,
-				criticalNoiseThreshold, maxWarningNoiseAmount, maxCriticalNoiseAmount, warningSamplesCount,
-				criticalSamplesCount);
+		return new ReportItem(recordedAt, lenghtInSeconds, samplesCount, warningNoiseThreshold, criticalNoiseThreshold,
+				maxWarningNoiseAmount, maxCriticalNoiseAmount, warningSamplesCount, criticalSamplesCount);
 	}
 
 	public static ReportItem createWithoutSamples(Calendar recordedAt, int lenghtInSeconds, int samplesCount,
@@ -221,9 +217,8 @@ public class ReportItem implements Serializable, HasSamplesEntryConfig {
 		double maxWarningNoiseAmount = config.getWarningNoiseAmount();
 		double maxCriticalNoiseAmount = config.getCriticalNoiseAmount();
 
-		return new ReportItem(recordedAt, lenghtInSeconds, null, samplesCount, warningNoiseThreshold,
-				criticalNoiseThreshold, maxWarningNoiseAmount, maxCriticalNoiseAmount, warningSamplesCount,
-				criticalSamplesCount);
+		return new ReportItem(recordedAt, lenghtInSeconds, samplesCount, warningNoiseThreshold, criticalNoiseThreshold,
+				maxWarningNoiseAmount, maxCriticalNoiseAmount, warningSamplesCount, criticalSamplesCount);
 	}
 
 }
