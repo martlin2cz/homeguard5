@@ -17,6 +17,7 @@ import cz.martlin.hg5.ws.services.AudioRecordService;
 import cz.martlin.hg5.ws.services.CommandService;
 import cz.martlin.hg5.ws.services.EchoService;
 import cz.martlin.hg5.ws.services.ReportItemChartRenderer;
+import cz.martlin.hg5.ws.services.ReportSummaryService;
 
 /**
  * Servlet implementing simple web service.
@@ -25,13 +26,12 @@ import cz.martlin.hg5.ws.services.ReportItemChartRenderer;
  *
  */
 public class WebServiceServlet extends HttpServlet {
-	private static final int UNKNOWN_SERVICE_CODE = 404;
-
-	private static final int SERVICE_FAILED_CODE = 500;
-
 	private static final long serialVersionUID = -2971057431348059536L;
-
 	private final Logger LOG = LogManager.getLogger(getClass());
+
+	private static final int UNKNOWN_SERVICE_CODE = 404;
+	private static final int SERVICE_FAILED_CODE = 500;
+	private static final String ENCODING = "UTF-8";
 
 	private static final Map<String, WebServiceProcessor> processors = initializeProcessors();
 
@@ -50,6 +50,7 @@ public class WebServiceServlet extends HttpServlet {
 		AudioRecordService audio = new AudioRecordService();
 		ReportItemChartRenderer graph = new ReportItemChartRenderer();
 		CommandService command = new CommandService();
+		ReportSummaryService summary = new ReportSummaryService();
 
 		processors.put("echo", echo);
 
@@ -62,6 +63,9 @@ public class WebServiceServlet extends HttpServlet {
 		processors.put("cmd", command);
 		processors.put("command", command);
 		processors.put("command.txt", command);
+
+		processors.put("summary.txt", summary);
+		processors.put("report.txt", summary);
 
 		return processors;
 	}
@@ -103,6 +107,7 @@ public class WebServiceServlet extends HttpServlet {
 
 		String contentType = processor.getContentType();
 		resp.setContentType(contentType);
+		resp.setCharacterEncoding(ENCODING);
 
 		OutputStream ous = resp.getOutputStream();
 		ous.write(bytes);

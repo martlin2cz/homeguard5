@@ -16,6 +16,23 @@ public class WebServiceUtils {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 	/**
+	 * Simply finds and returns find string or null
+	 * 
+	 * @param reportSpecAttrName
+	 * @param request
+	 * @return
+	 */
+	public static String getString(String param, Map<String, String[]> request) {
+		String[] strs = request.get(param);
+		if (strs != null && strs.length == 1) {
+			return strs[0];
+		} else {
+			return null;
+		}
+
+	}
+
+	/**
 	 * Parses datetime (firstly formated by DATE_FORMAT then unix format).
 	 * Throws exception if fails.
 	 * 
@@ -24,7 +41,8 @@ public class WebServiceUtils {
 	 * @param request
 	 * @return
 	 */
-	public static Calendar parseDateTime(String fullDateParam, String unixDateParam, Map<String, String[]> request) {
+	public static Calendar parseDateTime(String fullDateParam, String unixDateParam, Map<String, String[]> request)
+			throws IllegalArgumentException {
 		String[] fullDateStrArr = request.get(fullDateParam);
 		if (fullDateStrArr != null && fullDateStrArr.length == 1) {
 			String dateStr = fullDateStrArr[0];
@@ -48,7 +66,7 @@ public class WebServiceUtils {
 	 * @param dateStr
 	 * @return
 	 */
-	public static Calendar parseUnixDate(String paramName, String dateStr) {
+	public static Calendar parseUnixDate(String paramName, String dateStr) throws IllegalArgumentException {
 		Calendar day;
 		try {
 			day = Calendar.getInstance();
@@ -68,7 +86,7 @@ public class WebServiceUtils {
 	 * @param dateStr
 	 * @return
 	 */
-	public static Calendar parseFullDate(String paramName, String dateStr) {
+	public static Calendar parseFullDate(String paramName, String dateStr) throws IllegalArgumentException {
 		Calendar day;
 		try {
 			day = Calendar.getInstance();
@@ -89,7 +107,8 @@ public class WebServiceUtils {
 	 * @param request
 	 * @return
 	 */
-	public static int parseNumber(String paramName, Map<String, String[]> request) {
+	public static int parseNumber(String paramName, Map<String, String[]> request) throws IllegalArgumentException {
+
 		String[] numStrArr = request.get(paramName);
 		if (numStrArr == null || numStrArr.length != 1) {
 			throw new IllegalArgumentException("Missing numeric parameter " + paramName);
@@ -116,7 +135,8 @@ public class WebServiceUtils {
 	 * @return
 	 */
 	public static boolean parseBoolean(String paramName, Map<String, String[]> request, String valIfTrue,
-			String valIfFalse) {
+			String valIfFalse) throws IllegalArgumentException {
+
 		String[] boolStrArr = request.get(paramName);
 		if (boolStrArr != null && boolStrArr.length != 1) {
 			throw new IllegalArgumentException("Missing (or overdosed) boolean parameter " + paramName);

@@ -81,6 +81,10 @@ public class Homeguard implements Serializable {
 		return filesMan.loadLastReport();
 	}
 
+	/**
+	 * If running returns current report. Else fails with NullPointerException, so be careful!
+	 * @return
+	 */
 	public synchronized GuardingReport currentReport() {
 		return performer.getCurrentInstance().getReport();
 	}
