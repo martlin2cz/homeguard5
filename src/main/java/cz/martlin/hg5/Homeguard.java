@@ -82,7 +82,9 @@ public class Homeguard implements Serializable {
 	}
 
 	/**
-	 * If running returns current report. Else fails with NullPointerException, so be careful!
+	 * If running returns current report. Else fails with NullPointerException,
+	 * so be careful!
+	 * 
 	 * @return
 	 */
 	public synchronized GuardingReport currentReport() {

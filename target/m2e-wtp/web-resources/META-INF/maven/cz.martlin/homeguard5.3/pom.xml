@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.martlin</groupId>
 	<artifactId>homeguard5.3</artifactId>
-	<version>5.t3.6</version>
+	<version>5.t3.7</version>
 	<name>Homeguard 5, completelly web application with Primefaces GUI and implemented web service</name>
 	<packaging>war</packaging>
 
