@@ -8,6 +8,7 @@ import cz.martlin.hg5.logic.config.Configuration;
 import cz.martlin.hg5.logic.process.AbstractReporter;
 import cz.martlin.hg5.logic.process.Interruptable;
 import cz.martlin.hg5.logic.processV1.FileSystemReporter;
+import cz.martlin.hg5.logic.processV1_2.SimpleDropboxReporter;
 
 /**
  * Represents class which is starting point of running particular guarding
@@ -40,6 +41,7 @@ public class GuardingPerformer implements Serializable {
 		List<AbstractReporter> reporters = new ArrayList<>();
 
 		reporters.add(new FileSystemReporter(config));
+		reporters.add(new SimpleDropboxReporter(config));
 
 		return reporters;
 	}
@@ -51,7 +53,7 @@ public class GuardingPerformer implements Serializable {
 	public synchronized void start() {
 		if (instance == null) {
 			instance = new GuardingInstance(config, reporters);
-			
+
 			thread = new GuardInstanceThread(config, instance);
 			thread.start();
 		}
